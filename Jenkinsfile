@@ -53,7 +53,7 @@ pipeline {
           bandit  -r . --format custom --msg-template     "{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}"  -o bandit.out || echo "Controlled exit" 
           '''
         )
-        recordIssues tools: [pyLint(pattern: 'bandit.out')]
+        recordIssues tools: [pyLint(pattern: 'bandit.out')],
           qualityGates: [
             [threshold: 1, type: 'TOTAL', unstable: true], 
             [threshold: 2, type: 'TOTAL_ERROR', unstable: false]
@@ -109,23 +109,6 @@ pipeline {
         }
       }
     }   
-
-    stage ('Result Test'){
-      agent { label 'agent1' }
-      steps {
-        pipelineBanner()
-        catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-          unstash 'workspace'
-          sh ('''
-            echo $(pwd)
-            sleep 10
-            ls -arlt  "$(pwd)/actividad1-B/result-test.xml"
-
-            ''')
-          junit allowEmptyResults: true, testResults: '$(pwd)/actividad1-B/result-*.xml'  
-        }
-      }
-    }
   }
 }
 
