@@ -39,7 +39,7 @@ pipeline {
           '''
         )
         recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')],
-        qualityGates: [[threshold: 10, type: 'TOTAL', unstable: true], [threshold: 5, type: 'TOTAL_ERROR', unstable: false]]
+        qualityGates: [[threshold: 3, type: 'TOTAL', unstable: true], [threshold: 5, type: 'TOTAL_ERROR', unstable: false]]
 
         stash  (name: 'workspace')
 
