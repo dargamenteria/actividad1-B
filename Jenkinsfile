@@ -50,7 +50,7 @@ pipeline {
         pipelineBanner()
         sh ('''
           cd "$WORKSPACE/actividad1-B"
-          bandit  -r . --format custom --msg-template     "{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}"  -o bandit.out || echo "Controlled exit" 
+          bandit  -r . --format custom --msg-template     "{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}"  -o $(pwd)/bandit.out || echo "Controlled exit" 
           '''
         )
         recordIssues tools: [pyLint(pattern: 'bandit.out')],
