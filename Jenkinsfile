@@ -53,7 +53,7 @@ pipeline {
           bandit  -r . --format custom --msg-template     "{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}"  -o bandit.out || echo "Controlled exit" 
           '''
         )
-        recordIssues tools: [pylint(name: 'Bandit', pattern: 'bandit.out')],
+        recordIssues tools: [pyLint(pattern: 'bandit.out')]
           qualityGates: [
             [threshold: 1, type: 'TOTAL', unstable: true], 
             [threshold: 2, type: 'TOTAL_ERROR', unstable: false]
