@@ -69,7 +69,7 @@ pipeline {
         sh ('''
           cd "$WORKSPACE/actividad1-B"
           python3-coverage run --source=$(pwd)/app --omit=$(pwd)app/__init__.py,$(pwd)app/api.py  -m pytest test/unit/
-          python3-coverage xml
+          python3-coverage xml -o $(pwd)/coverage.xml
           '''
         )
         cobertura coberturaReportFile: 'coverage.xml'
