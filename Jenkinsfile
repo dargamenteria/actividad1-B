@@ -38,8 +38,8 @@ pipeline {
         )
         recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')],
           qualityGates: [
-            [threshold: 8, type: 'TOTAL', critically: 'UNSTABLE'], 
-            [threshold: 10,  type: 'TOTAL', critically: 'FAILURE' ]
+            [threshold: 4, type: 'TOTAL', critically: 'UNSTABLE'], 
+            [threshold: 7,  type: 'TOTAL', critically: 'FAILURE' ]
           ]
         stash  (name: 'workspace')
       }
