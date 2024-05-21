@@ -55,8 +55,8 @@ pipeline {
         )
         recordIssues tools: [pyLint(pattern: 'bandit.out')],
           qualityGates: [
-            [threshold: 1, type: 'TOTAL', unstable: true], 
-            [threshold: 2, type: 'TOTAL_ERROR', unstable: false]
+            [threshold: 1, type: 'TOTAL', critically: 'UNSTABLE'], 
+            [threshold: 2, type: 'TOTAL', critically: 'FAILURE', unstable: false]
           ]
         stash  (name: 'workspace')
       }
