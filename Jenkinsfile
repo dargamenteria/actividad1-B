@@ -26,44 +26,43 @@ pipeline {
         stash  (name: 'workspace')
       }
     }
-  
+
     stage ('Analysis phase'){
       parallel {
-    stage('Static code Analysis') {
-      agent { label 'linux' }
-      steps {
-        pipelineBanner()
-        sh ('''
-          cd "$WORKSPACE/actividad1-B"
-          flake8 --format=pylint --exit-zero --max-line-length 120 $(pwd)/app >flake8.out
-          '''
-        )
-        recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')],
-          qualityGates: [
-            [threshold: 8, type: 'TOTAL', critically: 'UNSTABLE'], 
-            [threshold: 10,  type: 'TOTAL', critically: 'FAILURE', unstable: false ]
-          ]
-        stash  (name: 'workspace')
-      }
-    }
-    stage('Security Analysis') {
-      agent { label 'linux' }
-      steps {
-        pipelineBanner()
-        sh ('''
-          cd "$WORKSPACE/actividad1-B"
-          bandit  -r . --format custom --msg-template     "{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}"  -o $(pwd)/bandit.out || echo "Controlled exit" 
-          '''
-        )
-        recordIssues tools: [pyLint(pattern: 'bandit.out')],
-          qualityGates: [
-            [threshold: 1, type: 'TOTAL', critically: 'UNSTABLE'], 
-            [threshold: 2, type: 'TOTAL', critically: 'FAILURE', unstable: false]
-          ]
-        stash  (name: 'workspace')
-      }
-    }
-
+        stage('Static code Analysis') {
+          agent { label 'linux' }
+          steps {
+            pipelineBanner()
+            sh ('''
+              cd "$WORKSPACE/actividad1-B"
+              flake8 --format=pylint --exit-zero --max-line-length 120 $(pwd)/app >flake8.out
+              '''
+            )
+            recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')],
+              qualityGates: [
+                [threshold: 8, type: 'TOTAL', critically: 'UNSTABLE'], 
+                [threshold: 10,  type: 'TOTAL', critically: 'FAILURE', unstable: false ]
+              ]
+            stash  (name: 'workspace')
+          }
+        }
+        stage('Security Analysis') {
+          agent { label 'linux' }
+          steps {
+            pipelineBanner()
+            sh ('''
+              cd "$WORKSPACE/actividad1-B"
+              bandit  -r . --format custom --msg-template     "{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}"  -o $(pwd)/bandit.out || echo "Controlled exit" 
+              '''
+            )
+            recordIssues tools: [pyLint(pattern: 'bandit.out')],
+              qualityGates: [
+                [threshold: 1, type: 'TOTAL', critically: 'UNSTABLE'], 
+                [threshold: 2, type: 'TOTAL', critically: 'FAILURE', unstable: false]
+              ]
+            stash  (name: 'workspace')
+          }
+        }
 
         stage('Coberture Analysis') {
           agent { label 'linux' }
@@ -79,12 +78,14 @@ pipeline {
             stash  (name: 'workspace')
           }
         }
+      }
     }
-  }
+
+
     stage('Test phase') {
       parallel {
         stage ('Test: Unitary') {
-          agent { label 'agent1' }
+          agent { label 'linux' }
           steps {
             pipelineBanner()
             catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
@@ -99,8 +100,8 @@ pipeline {
           }
         }
 
-        stage ('Test: Rest') {
-          agent { label 'agent1' }
+        stage ('Test: Integration') {
+          agent { label 'linux' }
           steps {
             pipelineBanner()
             catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
