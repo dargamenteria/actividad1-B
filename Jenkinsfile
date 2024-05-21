@@ -34,6 +34,7 @@ pipeline {
       steps {
         pipelineBanner()
         sh ('''
+          cd "$WORKSPACE/actividad1-B"
           flake8 --format=pylint --exit-zero app >flake8.out
           '''
         )
