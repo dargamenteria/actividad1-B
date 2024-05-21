@@ -72,7 +72,7 @@ pipeline {
           python3-coverage xml -o $(pwd)/coverage.xml
           '''
         )
-        cobertura coberturaReportFile: '$WORKSPACE/coverage.xml'
+        cobertura coberturaReportFile: 'actividad1-B/coverage.xml'
         stash  (name: 'workspace')
       }
     }
