@@ -2,8 +2,10 @@
 def call() {
   script {
     sh ('''
-      echo "Hostname: $(hostname -f)"
-      echo "Hostinfo: $(uname -a)"
+      echo "##########################"
+      echo "#Hostname: $(hostname -f)"
+      echo "#Hostinfo: $(uname -a)"
+      echo "##########################"
     ''')
   }
 }
