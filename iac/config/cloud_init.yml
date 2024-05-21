@@ -1,0 +1,35 @@
+#cloud-config
+# vim: syntax=yaml
+# examples:
+# https://cloudinit.readthedocs.io/en/latest/topics/examples.html
+bootcmd:
+  - echo "BOOT CMD"
+runcmd:
+ - [ ls, -l, / ]
+ - [ sh, -xc, "echo $(date) ': hello world!'" ]
+ssh_pwauth: true
+disable_root: false
+chpasswd:
+  list: |
+     root:temporal
+     ubuntu:temporal
+  expire: false
+users:
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    home: /home/ubuntu
+    shell: /bin/bash
+    lock_passwd: false
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDj/qvzCFBoF7piKZzY7faURI4IeZowQGWhIzIkruxqmYz2CQOxjrr02dNM68ndJb/0nHv0aVApUzSsVPCjpq9FcVhysjtmKnPedDLpsQL2gCKoJJmlGAVNt/xLsV57dxma1/5Vf3oLjgKavQUG/PDho2z62/hg0U+MUoegcjG7STKVuidOWGE3mNsKIksWs1wI6y20ONO4ueO1pKWBBSZbCxK/lRo+gf6jiEVqmwxvOSv453H4ta4PN7iRpInwDQU1Dxz+tCewPLID8d5Ewgao4a9oL04H0io8ESSSnnxyVaNbbG/pEOhN1MER81e2IS2MVXu7bodPIAPIjOMUrN8/ dani@draco
+  - name: jenkins
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    home: /home/jenkins
+    shell: /bin/bash
+    lock_passwd: false
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDj/qvzCFBoF7piKZzY7faURI4IeZowQGWhIzIkruxqmYz2CQOxjrr02dNM68ndJb/0nHv0aVApUzSsVPCjpq9FcVhysjtmKnPedDLpsQL2gCKoJJmlGAVNt/xLsV57dxma1/5Vf3oLjgKavQUG/PDho2z62/hg0U+MUoegcjG7STKVuidOWGE3mNsKIksWs1wI6y20ONO4ueO1pKWBBSZbCxK/lRo+gf6jiEVqmwxvOSv453H4ta4PN7iRpInwDQU1Dxz+tCewPLID8d5Ewgao4a9oL04H0io8ESSSnnxyVaNbbG/pEOhN1MER81e2IS2MVXu7bodPIAPIjOMUrN8/ dani@draco
+      - sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDXsDL1yEfKwE7SiE57SUZlnKxYBRoT2UNAfzGZYm3LjzZnpIIwOQpbQ4ok/7epNC0octYSP7Fivo+PeK1DiQucqPJUu31/41A9szWuQqe5ITG6Ir6Q4COSBaUysXaQzHwriRYPMYNNkwUNVa8nuk8x3SUcmJv+KIXAFV35zPhrCGpPkM5HaB/fLtjQzXJPVwwBo0BJkbkaDDt1yF+FxXgrJJpOagSKATg6UoMCQ1wPbhi2FpBzQQasDVYKc2pz7gWkzBfx2x1UJHuajzfMRgpEz86Y6/DI5Zs0tW1+g7uf6TvGOGh9KT/2OdYKD6skt50ltKYMI7ftRC2SDfYmWwEr88+3mlXGTd//7B/VxmFsZx6Ej65ylhoiZJfcBnqw+Hdcc4ytZkM9531SAROx90328qr9VGC5Bo+fpF8MA6VatX0jgJdsuQVgcWFsmwrx+I5F8O0vWXdcvNvTf0Tbq0Vf1AKmGf9piwetT7bPCUz0OkaDXlAzLhl8549omZtJfY0= jenkins@docker.paranoidworld.es
+final_message: "The system is finally up, after $UPTIME seconds"
