@@ -13,6 +13,7 @@ pipeline {
         pipelineBanner()
       }
     }
+
     stage('Get code') {
       agent { label 'agent2' }
       steps {
@@ -20,12 +21,9 @@ pipeline {
         sh ('''
           [ -e "$WORKSPACE/actividad1-B" ] && rm -fr "$WORKSPACE/actividad1-B"
           git clone https://${GIT_TOKEN}@github.com/dargamenteria/actividad1-B
-          ls -arlt 
-          echo $WORKSPACE
           '''
         )
         stash  (name: 'workspace')
-
       }
     }
 
@@ -39,10 +37,28 @@ pipeline {
           '''
         )
         recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')],
-        qualityGates: [[threshold: 3, type: 'TOTAL', unstable: true], [threshold: 5, type: 'TOTAL_ERROR', unstable: false]]
-
+          qualityGates: [
+            [threshold: 8, type: 'TOTAL', critically: 'UNSTABLE'], 
+            [threshold: 10,  type: 'TOTAL', critically: 'FAILURE' ]
+          ]
         stash  (name: 'workspace')
-
+      }
+    }
+    stage('Security Analysis') {
+      agent { label 'agent2' }
+      steps {
+        pipelineBanner()
+        sh ('''
+          cd "$WORKSPACE/actividad1-B"
+          bandit  -r . --format custom --msg-template     "{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}"  -o bandit.out  
+          '''
+        )
+        recordIssues tools: [pylint(name: 'Bandit', pattern: 'bandit.out')],
+          qualityGates: [
+            [threshold: 1, type: 'TOTAL', unstable: true], 
+            [threshold: 2, type: 'TOTAL_ERROR', unstable: false]
+          ]
+        stash  (name: 'workspace')
       }
     }
 
@@ -54,13 +70,15 @@ pipeline {
           agent { label 'agent1' }
           steps {
             pipelineBanner()
-            unstash 'workspace'
-            sh ('''
-              echo "Test phase" 
-              cd "$WORKSPACE/actividad1-B"
-              export PYTHONPATH=.
-              pytest-3 --junitxml=result-test.xml $(pwd)/test/unit
-              ''')
+            catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+              unstash 'workspace'
+              sh ('''
+                echo "Test phase" 
+                cd "$WORKSPACE/actividad1-B"
+                export PYTHONPATH=.
+                pytest-3 --junitxml=result-test.xml $(pwd)/test/unit
+                ''')
+            }
           }
         }
 
@@ -68,22 +86,24 @@ pipeline {
           agent { label 'agent1' }
           steps {
             pipelineBanner()
-            unstash 'workspace'
-            lock ('test-resources'){
-              sh ('''
-                echo "Test phase" 
-                cd "$WORKSPACE/actividad1-B"
+            catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+              unstash 'workspace'
+              lock ('test-resources'){
+                sh ('''
+                  echo "Test phase" 
+                  cd "$WORKSPACE/actividad1-B"
 
-                export PYTHONPATH=.
-                export FLASK_APP=$(pwd)/app/api.py
+                  export PYTHONPATH=.
+                  export FLASK_APP=$(pwd)/app/api.py
 
-                flask run &
-                java -jar /apps/wiremock/wiremock-standalone-3.5.4.jar --port 9090 --root-dir $(pwd)/test/wiremock &
+                  flask run &
+                  java -jar /apps/wiremock/wiremock-standalone-3.5.4.jar --port 9090 --root-dir $(pwd)/test/wiremock &
 
-                while [ "$(ss -lnt | grep -E "9090|5000" | wc -l)" != "2" ] ; do echo "No perative yet" ; sleep 1; done
+                  while [ "$(ss -lnt | grep -E "9090|5000" | wc -l)" != "2" ] ; do echo "No perative yet" ; sleep 1; done
 
-                pytest-3 --junitxml=result-rest.xml $(pwd)/test/rest
-                ''')
+                  pytest-3 --junitxml=result-rest.xml $(pwd)/test/rest
+                  ''')
+              }
             }
           }
         }
