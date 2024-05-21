@@ -2,7 +2,7 @@
 
 
 pipeline {
-  agent { label 'agent2' }
+  agent { label 'linux' }
   environment {
     GIT_TOKEN=credentials ('dargamenteria_github_token')
   }
@@ -15,7 +15,7 @@ pipeline {
     }
 
     stage('Get code') {
-      agent { label 'agent2' }
+      agent { label 'linux' }
       steps {
         pipelineBanner()
         sh ('''
@@ -26,9 +26,11 @@ pipeline {
         stash  (name: 'workspace')
       }
     }
-
+  
+    stage ('Analysis phase'){
+      parallel {
     stage('Static code Analysis') {
-      agent { label 'agent2' }
+      agent { label 'linux' }
       steps {
         pipelineBanner()
         sh ('''
@@ -45,7 +47,7 @@ pipeline {
       }
     }
     stage('Security Analysis') {
-      agent { label 'agent2' }
+      agent { label 'linux' }
       steps {
         pipelineBanner()
         sh ('''
@@ -62,22 +64,23 @@ pipeline {
       }
     }
 
-    stage('Coberture Analysis') {
-      agent { label 'agent2' }
-      steps {
-        pipelineBanner()
-        sh ('''
-          cd "$WORKSPACE/actividad1-B"
-          python3-coverage run --source=$(pwd)/app --omit=$(pwd)app/__init__.py,$(pwd)app/api.py  -m pytest test/unit/
-          python3-coverage xml -o $(pwd)/coverage.xml
-          '''
-        )
-        cobertura coberturaReportFile: 'actividad1-B/coverage.xml'
-        stash  (name: 'workspace')
-      }
+
+        stage('Coberture Analysis') {
+          agent { label 'linux' }
+          steps {
+            pipelineBanner()
+            sh ('''
+              cd "$WORKSPACE/actividad1-B"
+              python3-coverage run --source=$(pwd)/app --omit=$(pwd)app/__init__.py,$(pwd)app/api.py  -m pytest test/unit/
+              python3-coverage xml -o $(pwd)/coverage.xml
+              '''
+            )
+            cobertura coberturaReportFile: 'actividad1-B/coverage.xml'
+            stash  (name: 'workspace')
+          }
+        }
     }
-
-
+  }
     stage('Test phase') {
       parallel {
         stage ('Test: Unitary') {
