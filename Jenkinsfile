@@ -20,8 +20,8 @@ pipeline {
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
           pipelineBanner()
           sh ('''
-            [ -e "$WORKSPACE/actividad1-B" ] && rm -fr "$WORKSPACE/actividad1-B"
-            git clone https://${GIT_TOKEN}@github.com/dargamenteria/actividad1-B
+            #[ -e "$WORKSPACE/actividad1-B" ] && rm -fr "$WORKSPACE/actividad1-B"
+            git clone https://${GIT_TOKEN}@github.com/dargamenteria/actividad1-B $WORKSPACE
             '''
           )
           stash  (name: 'workspace')
@@ -39,7 +39,7 @@ pipeline {
               unstash 'workspace'
               sh ('''
                 cd "$WORKSPACE/actividad1-B"
-                flake8 --format=pylint --exit-zero --max-line-length 120 $(pwd)/app >flake8.out
+                flake8 --format=pylint --exit-zero --max-line-length 120 $(pwd)/app >$(pwd)/flake8.out
                 '''
               )
               recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')],
