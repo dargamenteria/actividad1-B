@@ -36,6 +36,7 @@ pipeline {
           steps {
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
               pipelineBanner()
+              unstash 'workspace'
               sh ('''
                 cd "$WORKSPACE/actividad1-B"
                 flake8 --format=pylint --exit-zero --max-line-length 120 $(pwd)/app >flake8.out
@@ -54,8 +55,8 @@ pipeline {
           agent { label 'linux' }
           steps {
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-
               pipelineBanner()
+              unstash 'workspace'
               sh ('''
                 cd "$WORKSPACE/actividad1-B"
                 bandit  -r . --format custom --msg-template     "{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}"  -o $(pwd)/bandit.out || echo "Controlled exit" 
@@ -74,16 +75,18 @@ pipeline {
         stage('Coberture Analysis') {
           agent { label 'linux' }
           steps {
-            pipelineBanner(catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-            )
-            sh ('''
-              cd "$WORKSPACE/actividad1-B"
-              python3-coverage run --source=$(pwd)/app --omit=$(pwd)app/__init__.py,$(pwd)app/api.py  -m pytest test/unit/
-              python3-coverage xml -o $(pwd)/coverage.xml
-              '''
-            )
-            cobertura coberturaReportFile: 'actividad1-B/coverage.xml'
-            stash  (name: 'workspace')
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+              pipelineBanner()
+              unstash 'workspace'
+              sh ('''
+                cd "$WORKSPACE/actividad1-B"
+                python3-coverage run --source=$(pwd)/app --omit=$(pwd)app/__init__.py,$(pwd)app/api.py  -m pytest test/unit/
+                python3-coverage xml -o $(pwd)/coverage.xml
+                '''
+              )
+              cobertura coberturaReportFile: 'actividad1-B/coverage.xml'
+              stash  (name: 'workspace')
+            }
           }
         }
       }
@@ -96,15 +99,16 @@ pipeline {
       stage ('Test: Unitary') {
         agent { label 'linux' }
         steps {
-          pipelineBanner()
           catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+            pipelineBanner()
             unstash 'workspace'
             sh ('''
               echo "Test phase" 
               cd "$WORKSPACE/actividad1-B"
               export PYTHONPATH=.
               pytest-3 --junitxml=result-test.xml $(pwd)/test/unit
-              ''')
+              '''
+            )
           }
         }
       }
@@ -112,8 +116,8 @@ pipeline {
       stage ('Test: Integration') {
         agent { label 'linux' }
         steps {
-          pipelineBanner()
           catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+            pipelineBanner()
             unstash 'workspace'
             lock ('test-resources'){
               sh ('''
@@ -129,7 +133,8 @@ pipeline {
                 while [ "$(ss -lnt | grep -E "9090|5000" | wc -l)" != "2" ] ; do echo "No perative yet" ; sleep 1; done
 
                 pytest-3 --junitxml=result-rest.xml $(pwd)/test/rest
-                ''')
+                '''
+              )
             }
           }
         }
@@ -137,6 +142,3 @@ pipeline {
     }
   }   
 }
-}
-
-
