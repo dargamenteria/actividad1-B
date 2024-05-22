@@ -20,8 +20,8 @@ pipeline {
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
           pipelineBanner()
           sh ('''
-            #[ -e "$WORKSPACE/actividad1-B" ] && rm -fr "$WORKSPACE/actividad1-B"
-            git clone https://${GIT_TOKEN}@github.com/dargamenteria/actividad1-B $WORKSPACE
+            #[ -e "$WORKSPACE/gitCode" ] && rm -fr "$WORKSPACE/gitCode"
+            git clone https://${GIT_TOKEN}@github.com/dargamenteria/actividad1-B $WORKSPACE/gitCode
             '''
           )
           stash  (name: 'workspace')
@@ -38,11 +38,11 @@ pipeline {
               pipelineBanner()
               unstash 'workspace'
               sh ('''
-                cd "$WORKSPACE/actividad1-B"
+                cd "$WORKSPACE/gitCode"
                 flake8 --format=pylint --exit-zero --max-line-length 120 $(pwd)/app >$(pwd)/flake8.out
                 '''
               )
-              recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')],
+              recordIssues tools: [flake8(name: 'Flake8', pattern: 'gitCode/flake8.out')],
                 qualityGates: [
                   [threshold: 8, type: 'TOTAL', critically: 'UNSTABLE'], 
                   [threshold: 10,  type: 'TOTAL', critically: 'FAILURE', unstable: false ]
@@ -58,11 +58,11 @@ pipeline {
               pipelineBanner()
               unstash 'workspace'
               sh ('''
-                cd "$WORKSPACE/actividad1-B"
+                cd "$WORKSPACE/gitCode"
                 bandit  -r . --format custom --msg-template     "{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}"  -o $(pwd)/bandit.out || echo "Controlled exit" 
                 '''
               )
-              recordIssues tools: [pyLint(pattern: 'bandit.out')],
+              recordIssues tools: [pyLint(pattern: 'gitCode/bandit.out')],
                 qualityGates: [
                   [threshold: 1, type: 'TOTAL', critically: 'UNSTABLE'], 
                   [threshold: 2, type: 'TOTAL', critically: 'FAILURE', unstable: false]
@@ -79,12 +79,12 @@ pipeline {
               pipelineBanner()
               unstash 'workspace'
               sh ('''
-                cd "$WORKSPACE/actividad1-B"
+                cd "$WORKSPACE/gitCode"
                 python3-coverage run --source=$(pwd)/app --omit=$(pwd)app/__init__.py,$(pwd)app/api.py  -m pytest test/unit/
                 python3-coverage xml -o $(pwd)/coverage.xml
                 '''
               )
-              cobertura coberturaReportFile: 'actividad1-B/coverage.xml'
+              cobertura coberturaReportFile: 'gitCode/coverage.xml'
               stash  (name: 'workspace')
             }
           }
@@ -104,7 +104,7 @@ pipeline {
               unstash 'workspace'
               sh ('''
                 echo "Test phase" 
-                cd "$WORKSPACE/actividad1-B"
+                cd "$WORKSPACE/gitCode"
                 export PYTHONPATH=.
                 pytest-3 --junitxml=result-test.xml $(pwd)/test/unit
                 '''
@@ -122,7 +122,7 @@ pipeline {
               lock ('test-resources'){
                 sh ('''
                   echo "Test phase" 
-                  cd "$WORKSPACE/actividad1-B"
+                  cd "$WORKSPACE/gitCode"
 
                   export PYTHONPATH=.
                   export FLASK_APP=$(pwd)/app/api.py
