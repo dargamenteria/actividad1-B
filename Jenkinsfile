@@ -91,50 +91,51 @@ pipeline {
         }
       }
     }
-  }
+  
 
 
-  stage('Test phase') {
-    parallel {
-      stage ('Test: Unitary') {
-        agent { label 'linux' }
-        steps {
-          catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-            pipelineBanner()
-            unstash 'workspace'
-            sh ('''
-              echo "Test phase" 
-              cd "$WORKSPACE/actividad1-B"
-              export PYTHONPATH=.
-              pytest-3 --junitxml=result-test.xml $(pwd)/test/unit
-              '''
-            )
-          }
-        }
-      }
-
-      stage ('Test: Integration') {
-        agent { label 'linux' }
-        steps {
-          catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-            pipelineBanner()
-            unstash 'workspace'
-            lock ('test-resources'){
+    stage('Test phase') {
+      parallel {
+        stage ('Test: Unitary') {
+          agent { label 'linux' }
+          steps {
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+              pipelineBanner()
+              unstash 'workspace'
               sh ('''
                 echo "Test phase" 
                 cd "$WORKSPACE/actividad1-B"
-
                 export PYTHONPATH=.
-                export FLASK_APP=$(pwd)/app/api.py
-
-                flask run &
-                java -jar /apps/wiremock/wiremock-standalone-3.5.4.jar --port 9090 --root-dir $(pwd)/test/wiremock &
-
-                while [ "$(ss -lnt | grep -E "9090|5000" | wc -l)" != "2" ] ; do echo "No perative yet" ; sleep 1; done
-
-                pytest-3 --junitxml=result-rest.xml $(pwd)/test/rest
+                pytest-3 --junitxml=result-test.xml $(pwd)/test/unit
                 '''
               )
+            }
+          }
+        }
+
+        stage ('Test: Integration') {
+          agent { label 'linux' }
+          steps {
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+              pipelineBanner()
+              unstash 'workspace'
+              lock ('test-resources'){
+                sh ('''
+                  echo "Test phase" 
+                  cd "$WORKSPACE/actividad1-B"
+
+                  export PYTHONPATH=.
+                  export FLASK_APP=$(pwd)/app/api.py
+
+                  flask run &
+                  java -jar /apps/wiremock/wiremock-standalone-3.5.4.jar --port 9090 --root-dir $(pwd)/test/wiremock &
+
+                  while [ "$(ss -lnt | grep -E "9090|5000" | wc -l)" != "2" ] ; do echo "No perative yet" ; sleep 1; done
+
+                  pytest-3 --junitxml=result-rest.xml $(pwd)/test/rest
+                  '''
+                )
+              }
             }
           }
         }
