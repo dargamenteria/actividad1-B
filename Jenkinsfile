@@ -20,7 +20,7 @@ pipeline {
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
           pipelineBanner()
           sh ('''
-            #[ -e "$WORKSPACE/gitCode" ] && rm -fr "$WORKSPACE/gitCode"
+            [ -e "$WORKSPACE/gitCode" ] && rm -fr "$WORKSPACE/gitCode"
             git clone https://${GIT_TOKEN}@github.com/dargamenteria/actividad1-B $WORKSPACE/gitCode
             '''
           )
@@ -40,6 +40,7 @@ pipeline {
               sh ('''
                 cd "$WORKSPACE/gitCode"
                 flake8 --format=pylint --exit-zero --max-line-length 120 $(pwd)/app >$(pwd)/flake8.out
+                exit 1
                 '''
               )
               recordIssues tools: [flake8(name: 'Flake8', pattern: 'gitCode/flake8.out')],
@@ -82,6 +83,7 @@ pipeline {
                 cd "$WORKSPACE/gitCode"
                 python3-coverage run --source=$(pwd)/app --omit=$(pwd)app/__init__.py,$(pwd)app/api.py  -m pytest test/unit/
                 python3-coverage xml -o $(pwd)/coverage.xml
+                exit 1
                 '''
               )
               cobertura coberturaReportFile: 'gitCode/coverage.xml'
@@ -107,6 +109,7 @@ pipeline {
                 cd "$WORKSPACE/gitCode"
                 export PYTHONPATH=.
                 pytest-3 --junitxml=result-test.xml $(pwd)/test/unit
+                exit 1
                 '''
               )
             }
