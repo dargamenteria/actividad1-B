@@ -154,15 +154,14 @@ pipeline {
                 export FLASK_APP=$(pwd)/app/api.py
 
                 flask run &
-                
+                while [ "$(ss -lnt | grep -E "5000" | wc -l)" != "1" ] ; do echo "No perative yet" ; sleep 1; done
+
               ''')
           }
           node ("jmeter"){
             sh ('''
-              while [ "$(ss -lnt | grep -E "5000" | wc -l)" != "1" ] ; do echo "No perative yet" ; sleep 1; done
               curl slave1.paranoidworld.es:5000/
               ''')            
-
             
           }
         }
