@@ -153,7 +153,7 @@ pipeline {
                 export PYTHONPATH=.
                 export FLASK_APP=$(pwd)/app/api.py
 
-                flask run run -h 0.0.0.0 -p 5000 &
+                flask run -h 0.0.0.0 -p 5000 &
                 while [ "$(ss -lnt | grep -E "5000" | wc -l)" != "1" ] ; do echo "No perative yet" ; sleep 1; done
 
                 ssh jenkins@slave2.paranoidworld.es 'curl http://slave1.paranoidworld.es:5000'
