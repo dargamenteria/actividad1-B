@@ -155,9 +155,11 @@ pipeline {
                 while [ "$(ss -lnt | grep -E "5000" | wc -l)" != "1" ] ; do echo "No perative yet" ; sleep 1; done
                 
                 scp $(pwd)/test/jmeter/flaskplan.jmx jenkins@slave2.paranoidworld.es:
-                ssh jenkins@slave2.paranoidworld.es 'rm ~/flaskplan.jtl; jmeter -n -t ~/flaskplan.jmx -l ~/flaskplan.jtl'
+                ssh jenkins@slave2.paranoidworld.es 'rm ~/flaskplan.jtl; /apps/jmeter/bin/jmeter -n -t ~/flaskplan.jmx -l ~/flaskplan.jtl'
+                scp jenkins@slave2.paranoidworld.es:flaskplan.jtl .
 
               ''')
+            perfReport sourceDataFiles: 'gitCode/flaskplan.jtl'
 
       }
     }
