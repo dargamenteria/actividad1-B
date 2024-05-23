@@ -141,8 +141,6 @@ pipeline {
     }
     stage('Perfomance checks') {
       steps {
-        script {
-          node ("flask"){
             pipelineBanner()
             unstash 'workspace'
 
@@ -155,12 +153,12 @@ pipeline {
 
                 flask run -h 0.0.0.0 -p 5000 &
                 while [ "$(ss -lnt | grep -E "5000" | wc -l)" != "1" ] ; do echo "No perative yet" ; sleep 1; done
+                
+                scp $(pwd)/test/jmeter/flaskplan.jmx jenkins@slave2.paranoidworld.es:
+                ssh jenkins@slave2.paranoidworld.es 'rm ~/flaskplan.jtl; jmeter -n -t ~/flaskplan.jmx -l ~/flaskplan.jtl'
 
-                ssh jenkins@slave2.paranoidworld.es 'curl http://slave1.paranoidworld.es:5000'
               ''')
-          }
 
-        }
       }
     }
 
