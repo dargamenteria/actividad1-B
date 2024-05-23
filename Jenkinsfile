@@ -125,7 +125,7 @@ pipeline {
                   export PYTHONPATH=.
                   export FLASK_APP=$(pwd)/app/api.py
 
-                  flask run &
+                  flask run -h 0.0.0.0 -p 5000 &
                   java -jar /apps/wiremock/wiremock-standalone-3.5.4.jar --port 9090 --root-dir $(pwd)/test/wiremock &
 
                   while [ "$(ss -lnt | grep -E "9090|5000" | wc -l)" != "2" ] ; do echo "No perative yet" ; sleep 1; done
