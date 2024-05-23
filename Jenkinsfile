@@ -156,14 +156,10 @@ pipeline {
                 flask run &
                 while [ "$(ss -lnt | grep -E "5000" | wc -l)" != "1" ] ; do echo "No perative yet" ; sleep 1; done
 
+                ssh jenkins@slave2.paranoidworld.es 'curl http://slave1.paranoidworld.es:5000'
               ''')
           }
-          node ("jmeter"){
-            sh ('''
-              curl slave1.paranoidworld.es:5000/
-              ''')            
-            
-          }
+
         }
       }
     }
