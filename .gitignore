@@ -1,3 +1,5 @@
+.coverage
+htmlcov
 result.xml
 iac/.terraform
 .lock*

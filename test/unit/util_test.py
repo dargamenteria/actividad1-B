@@ -23,5 +23,15 @@ class TestUtil(unittest.TestCase):
         self.assertRaises(TypeError, util.convert_to_number, None)
         self.assertRaises(TypeError, util.convert_to_number, object())
 
+    def test_invalid_convert (self):
+        self.assertRaises(TypeError, util.InvalidConvertToNumber, "foo")
+        self.assertRaises(TypeError, util.InvalidConvertToNumber, ".foo")
+
+
+    def test_validate_permissions (self):
+        self.assertEqual (True, util.validate_permissions("add", "user1"))
+        self.assertEqual (False, util.validate_permissions("add", "foo"))
+
+
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()

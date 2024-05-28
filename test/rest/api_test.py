@@ -16,6 +16,7 @@ class TestApi(unittest.TestCase):
         self.assertIsNotNone(BASE_URL, "URL no configurada")
         self.assertTrue(len(BASE_URL) > 8, "URL no configurada")
 
+        
     def test_api_divide(self):
         url = f"{BASE_URL}/calc/divide/4/2"
         response = urlopen(url, timeout=DEFAULT_TIMEOUT)
