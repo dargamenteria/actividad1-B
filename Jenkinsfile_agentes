@@ -80,7 +80,7 @@ pipeline {
               unstash 'workspace'
               sh ('''
                 cd "$WORKSPACE/gitCode"
-                python3-coverage run --source=$(pwd)/app --omit=$(pwd)app/__init__.py,$(pwd)app/api.py  -m pytest test/unit/
+                python3-coverage run --source=$(pwd)/app --omit=$(pwd)/app/__init__.py,$(pwd)/app/api.py  -m pytest test/unit/
                 python3-coverage xml -o $(pwd)/coverage.xml
                 '''
               )
