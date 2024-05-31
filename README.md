@@ -12,9 +12,9 @@ En este repo se incluye la solución al caso practico1 apartado A
 -   Directorio App: donde se encuentra el código de la aplicación
 -   Directorio docs: donde se encuentra la documentación elaborada en la
     práctica
-    -   [Parte A Reto1](docs/Parte_B_Reto1.md)
-    -   [Parte A Reto2](docs/Parte_B_Reto2.md)
-    -   [Parte A Reto3](docs/Parte_B_Reto3.md)
+    -   [Parte A Reto1](docs/Parte_B_Reto_1.md)
+    -   [Parte A Reto2](docs/Parte_B_Reto_2.md)
+    -   [Parte A Reto3](docs/Parte_B_Reto_3.md)
 -   Directorio iac: código terraform para el plataformado de los nodos
     de jenkins
 -   Directorio jekins: librería compartida
