@@ -7,10 +7,16 @@
     -   [Pruebas unitarias](#pruebas-unitarias)
     -   [Pruebas de
         integración](#pruebas-de-integración)
+        -   [Ejemplo de resultado de las pruebas unitarias y de
+            integración](#ejemplo-de-resultado-de-las-pruebas-unitarias-y-de-integración)
     -   [Pruebas de análisis de
         código](#pruebas-de-análisis-de-código)
+        -   [Ejemplo de resultado de las pruebas de analisis de
+            código](#ejemplo-de-resultado-de-las-pruebas-de-analisis-de-código)
     -   [Pruebas de seguridad
         (*Bandit*)](#pruebas-de-seguridad-bandit)
+        -   [Ejemplo de resultado de las pruebas de
+            seguridad](#ejemplo-de-resultado-de-las-pruebas-de-seguridad)
     -   [Pruebas de cobertura
         (*Coverage*)](#pruebas-de-cobertura-coverage)
     -   [Pruebas de
@@ -211,6 +217,12 @@ Definimos la fase de test unidarios de la siguiente manera:
        }
 ```
 
+### Ejemplo de resultado de las pruebas unitarias y de integración
+
+La siguiente imagen muestra en *Jenkins* las gráficas con los resultados
+de las pruebas de integración y unitarias.
+![7d51fe08d24bb20b557064da8f494583.png](_resources/7d51fe08d24bb20b557064da8f494583.png)
+
 ## Pruebas de análisis de código
 
 Han de cumplir los siguientes requerimientos
@@ -248,6 +260,14 @@ A continuación se muestra la definición de la fase:
         }
 ```
 
+### Ejemplo de resultado de las pruebas de analisis de código
+
+La siguiente imagen muestra los resultados en *Jenkins* de las pruebas
+de código.
+
+![301818140d496cef15d144f94fcb5bc2.png](_resources/301818140d496cef15d144f94fcb5bc2.png)
+![08ccdbf6ff5e02e51f6ac3b27be7b2a5.png](_resources/08ccdbf6ff5e02e51f6ac3b27be7b2a5.png)
+
 ## Pruebas de seguridad (*Bandit*)
 
 -   Si se encuentran 2 o más hallazgos, debe marcarse la etapa y el
@@ -279,6 +299,13 @@ A continuación se muestra la definición de la fase:
          }
        }
 ```
+
+### Ejemplo de resultado de las pruebas de seguridad
+
+La siguiente imagen muestra los resultados en *Jenkins* de las pruebas
+de seguridad
+![ae1fbfde1fd8d8d01f3148e2925391a8.png](_resources/ae1fbfde1fd8d8d01f3148e2925391a8.png)
+![fbab829a654576cc81edb0d58983b0a2.png](_resources/fbab829a654576cc81edb0d58983b0a2.png)
 
 ## Pruebas de cobertura (*Coverage*)
 
@@ -318,6 +345,10 @@ durante todo el *pipeline*.
 La siguiente imagen muestra la *pipeline* con varios pasos fallidos para
 verificar su avance\
 ![b4aca7db3a114d4a777d82982ed8f2ee.png](_resources/b4aca7db3a114d4a777d82982ed8f2ee.png)
+\### Ejemplo de resultado de las pruebas de cobertura La siguiente
+imagen muestra los resultados en *Jenkins* de las pruebas de cobertura
+![e23e8840ff77772412fafd0ee0d1d269.png](_resources/e23e8840ff77772412fafd0ee0d1d269.png)
+![67b521120ec72385347dbc3201beea14.png](_resources/67b521120ec72385347dbc3201beea14.png)
 
 ## Pruebas de *Jmeter*
 
