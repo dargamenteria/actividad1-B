@@ -139,37 +139,49 @@ pipeline {
             }
           }
         }
-      }
-    }
-    stage('Perfomance checks') {
-      agent { label 'flask' }
-      steps {
-        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-          pipelineBanner()
-          unstash 'workspace'
-          sh ('''
-            echo "Test phase"
-            cd "$WORKSPACE/gitCode"
 
-            export PYTHONPATH=.
-            export FLASK_APP=$(pwd)/app/api.py
-
-            flask run -h 0.0.0.0 -p 5000 &
-            while [ "$(ss -lnt | grep -E "5000" | wc -l)" != "1" ] ; do echo "No perative yet" ; sleep 1; done
-
-            scp $(pwd)/test/jmeter/flaskplan.jmx jenkins@slave2.paranoidworld.es:
-            ssh jenkins@slave2.paranoidworld.es 'rm ~/flaskplan.jtl; /apps/jmeter/bin/jmeter -n -t ~/flaskplan.jmx -l ~/flaskplan.jtl'
-            scp jenkins@slave2.paranoidworld.es:flaskplan.jtl .
-
-            ''')
-          perfReport sourceDataFiles: 'gitCode/flaskplan.jtl'
+        stage ('Result Test'){
+          agent { label 'agent1' }
+          steps {
+            pipelineBanner()
+            catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+              unstash 'workspace'
+              junit allowEmptyResults: true, testResults: 'gitCode/result-*.xml'
+            }
+          }
         }
       }
     }
   }
-  post {
-    always {
-      cleanWs()
+  stage('Perfomance checks') {
+    agent { label 'flask' }
+    steps {
+      catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+        pipelineBanner()
+        unstash 'workspace'
+        sh ('''
+          echo "Test phase"
+          cd "$WORKSPACE/gitCode"
+
+          export PYTHONPATH=.
+          export FLASK_APP=$(pwd)/app/api.py
+
+          flask run -h 0.0.0.0 -p 5000 &
+          while [ "$(ss -lnt | grep -E "5000" | wc -l)" != "1" ] ; do echo "No perative yet" ; sleep 1; done
+
+          scp $(pwd)/test/jmeter/flaskplan.jmx jenkins@slave2.paranoidworld.es:
+          ssh jenkins@slave2.paranoidworld.es 'rm ~/flaskplan.jtl; /apps/jmeter/bin/jmeter -n -t ~/flaskplan.jmx -l ~/flaskplan.jtl'
+          scp jenkins@slave2.paranoidworld.es:flaskplan.jtl .
+
+          ''')
+        perfReport sourceDataFiles: 'gitCode/flaskplan.jtl'
+      }
     }
   }
+}
+post {
+  always {
+    cleanWs()
+  }
+}
 }
