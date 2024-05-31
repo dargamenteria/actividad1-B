@@ -146,11 +146,8 @@ pipeline {
             pipelineBanner()
             catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
               unstash 'workspace'
-              sh ('''
-                echo $(pwd)
-                ls -arlt  "$(pwd)/actividad1-A/result-*.xml"
-                ''')
-              junit allowEmptyResults: true, testResults: '$(pwd)/actividad1-A/result-*.xml'
+
+              junit allowEmptyResults: true, testResults: 'gitCode/result-*.xml'
 
             }
           }
