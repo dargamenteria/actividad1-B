@@ -354,7 +354,7 @@ segundos.
 ### *Jenkinsfile*
 
 Para poder distribuir la carga entre los distintos nodos slave hemos
-optado por la siguiente
+optado por la siguiente solución
 
 ``` mermaid
 sequenceDiagram
