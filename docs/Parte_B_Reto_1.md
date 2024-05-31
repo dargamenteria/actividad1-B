@@ -439,7 +439,7 @@ stage('Perfomance checks') {
 ### Gráficas de rendimiento
 
 La siguiente imagen muestra las gráficas de rendimiento. En está prueba
-en concreto el valor de percentil 90 es de 1530ms\
+en concreto el valor de percentil 90 es de 1530ms, dicho de otra forma, el 90% de las peticiones tienen una duración inferior a 1530ms
 ![bed5a524c01c8843d0395da4f139eae9.png](_resources/bed5a524c01c8843d0395da4f139eae9.png)
 
 # Ficheros y salidas
