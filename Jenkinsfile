@@ -44,7 +44,7 @@ pipeline {
               )
               recordIssues tools: [flake8(name: 'Flake8', pattern: 'gitCode/flake8.out')],
                 qualityGates: [
-                  [threshold: 8, type: 'TOTAL', critically: 'UNSTABLE'], 
+                  [threshold: 8, type: 'TOTAL', critically: 'UNSTABLE'],
                   [threshold: 10,  type: 'TOTAL', critically: 'FAILURE', unstable: false ]
                 ]
               stash  (name: 'workspace')
@@ -59,12 +59,12 @@ pipeline {
               unstash 'workspace'
               sh ('''
                 cd "$WORKSPACE/gitCode"
-                bandit  -r . --format custom --msg-template     "{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}"  -o $(pwd)/bandit.out || echo "Controlled exit" 
+                bandit  -r . --format custom --msg-template     "{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}"  -o $(pwd)/bandit.out || echo "Controlled exit"
                 '''
               )
               recordIssues tools: [pyLint(pattern: 'gitCode/bandit.out')],
                 qualityGates: [
-                  [threshold: 1, type: 'TOTAL', critically: 'UNSTABLE'], 
+                  [threshold: 1, type: 'TOTAL', critically: 'UNSTABLE'],
                   [threshold: 2, type: 'TOTAL', critically: 'FAILURE', unstable: false]
                 ]
               stash  (name: 'workspace')
@@ -80,8 +80,10 @@ pipeline {
               unstash 'workspace'
               sh ('''
                 cd "$WORKSPACE/gitCode"
-                python3-coverage run --source=$(pwd)/app --omit=$(pwd)app/__init__.py,$(pwd)app/api.py  -m pytest test/unit/
-                python3-coverage xml -o $(pwd)/coverage.xml
+                #python3-coverage run --source=$(pwd)/app --omit=$(pwd)/app/__init__.py,$(pwd)/app/api.py  -m pytest test/unit/
+                #python3-coverage xml -o $(pwd)/coverage.xml
+                coverage run --source=$(pwd)/app --branch --omit=$(pwd)/app/__init__.py,$(pwd)/app/api.py  -m pytest $(pwd)/test/unit ; coverage html; coverage report
+                coverage xml -o $(pwd)/coverage.xml
                 '''
               )
               cobertura coberturaReportFile: 'gitCode/coverage.xml'
@@ -101,7 +103,7 @@ pipeline {
               pipelineBanner()
               unstash 'workspace'
               sh ('''
-                echo "Test phase" 
+                echo "Test phase"
                 cd "$WORKSPACE/gitCode"
                 export PYTHONPATH=.
                 pytest-3 --junitxml=result-test.xml $(pwd)/test/unit
@@ -119,7 +121,7 @@ pipeline {
               unstash 'workspace'
               lock ('test-resources'){
                 sh ('''
-                  echo "Test phase" 
+                  echo "Test phase"
                   cd "$WORKSPACE/gitCode"
 
                   export PYTHONPATH=.
@@ -146,7 +148,7 @@ pipeline {
           pipelineBanner()
           unstash 'workspace'
           sh ('''
-            echo "Test phase" 
+            echo "Test phase"
             cd "$WORKSPACE/gitCode"
 
             export PYTHONPATH=.
@@ -164,6 +166,10 @@ pipeline {
         }
       }
     }
-  }   
+  }
+  post {
+    always {
+      cleanWs()
+    }
+  }
 }
-
