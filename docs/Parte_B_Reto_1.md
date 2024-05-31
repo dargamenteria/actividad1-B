@@ -140,6 +140,23 @@ To github.com:dargamenteria/actividad1-B.git
 
 # Pipeline
 
+El *pipeline* creado consta de las siguientes fases
+* Pipeline Info
+* Get Code
+* Analysis phase
+  * Static code Analysis
+  * Security Analysis
+  * Coberture Analysis
+* Test phase
+  * Test: Unitary
+  * Test: Integration
+  * Result Test
+* Perfomance checks
+
+Las fases *Analysis phase*, *Test phase* son fases que paralelizan distintos *steps*.
+
+
+
 ## Pruebas unitarias
 
 Se requieren que cumplan las siguintes restricciones
