@@ -86,8 +86,6 @@ resource "null_resource" "provisioner" {
       "sudo curl --create-dirs -O --output-dir /apps/wiremock https://repo1.maven.org/maven2/org/wiremock/wiremock-standalone/3.5.4/wiremock-standalone-3.5.4.jar",
       "sudo chmod -R 755 /apps/wiremock",
       "sudo chmod +x  /apps/wiremock/wiremock-standalone-3.5.4.jar",
-
-
     ]
 
     connection {
