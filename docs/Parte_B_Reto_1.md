@@ -153,7 +153,7 @@ El *pipeline* creado consta de las siguientes fases
   * Result Test
 * Perfomance checks
 
-Las fases *Analysis phase*, *Test phase* son fases que paralelizan distintos *steps*.
+Las fases *Analysis phase*, *Test phase* paralelizan distintos *steps*.
 
 
 
@@ -254,7 +254,7 @@ Han de cumplir los siguientes requerimientos
 A continuación se muestra la definición de la fase:
 
 ``` groovy
-                stage('Static code Analysis') {
+       stage('Static code Analysis') {
           agent { label 'linux' }
           steps {
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
@@ -415,11 +415,8 @@ sequenceDiagram
 
     create participant jenkins
 
-
-
     destroy jenkins
-    slave1-xjenkins: elavorate Perfomance test
-        
+    slave1-xjenkins: elavorate Perfomance test  
 
 ```
 

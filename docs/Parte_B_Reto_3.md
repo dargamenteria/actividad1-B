@@ -109,6 +109,17 @@ desde un 40% a un 100%
 
 ![fac2526391d39668b5858c7348144736.png](_resources/fac2526391d39668b5858c7348144736.png)
 
+```
+Wrote HTML report to htmlcov/index.html
++ coverage report
+Name          Stmts   Miss Branch BrPart  Cover
+-----------------------------------------------
+app/calc.py      24      0      4      0   100%
+app/util.py       7      0      2      0   100%
+-----------------------------------------------
+TOTAL            31      0      6      0   100%
+```
+
 El log de la ejecución se muestra a continuación:
 
 ``` bash
